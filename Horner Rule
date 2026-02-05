@@ -1,0 +1,43 @@
+#include <iostream>
+#include <chrono>
+#include <vector>
+#include <iomanip>
+using namespace std;
+
+double calculatePolynomial(vector<double> &poly_coeff, int degree, double eval_point, int current_index) {
+    if (current_index == degree - 1) 
+        return poly_coeff[current_index];
+    return poly_coeff[current_index] + eval_point * calculatePolynomial(poly_coeff, degree, eval_point, current_index + 1);
+}
+
+int main() {
+    vector<vector<double>> time_results(10, vector<double>(10));
+    vector<int> degree_values = {100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000};
+    
+    double eval_point = 2.5;
+    
+    cout << "Polynomial Evaluation Using Horner's Method\n";
+    cout << "Student Roll: UEM243135\n\n";
+    
+    for (int test_num = 0; test_num < 10; test_num++) {
+        int poly_degree = degree_values[test_num];
+        vector<double> poly_coeff(poly_degree + 1, 1.5);
+        
+        double sum_time = 0.0;
+        
+        for (int run = 0; run < 10; run++) {
+            auto time_start = chrono::high_resolution_clock::now();
+            double answer = calculatePolynomial(poly_coeff, poly_degree, eval_point, 0);
+            auto time_end = chrono::high_resolution_clock::now();
+            
+            chrono::duration<double, micro> time_taken = time_end - time_start;
+            time_results[test_num][run] = time_taken.count();
+            sum_time += time_taken.count();
+        }
+        
+        double mean_time = sum_time / 10.0;
+        cout << "Polynomial Degree: " << poly_degree << " | Mean Execution Time: " << mean_time << " microseconds\n";
+    }
+    
+    return 0;
+}
