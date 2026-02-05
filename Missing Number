@@ -1,0 +1,48 @@
+#include <iostream>
+#include <chrono>
+#include <vector>
+#include <iomanip>
+using namespace std;
+
+int searchMissingElement(vector<int> &sequence, int size) {
+    for (int pos = 1; pos < size; pos++) {
+        if (sequence[pos] - sequence[pos - 1] != 1) {
+            return sequence[pos - 1] + 1;
+        }
+    }
+    return size + 1;
+}
+
+int main() {
+    vector<vector<double>> execution_times(10, vector<double>(10));
+    vector<int> array_sizes = {1000, 5000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000};
+    
+    cout << "Missing Number Detection Algorithm\n";
+    cout << "Roll Number: UEM243135\n\n";
+    
+    for (int test_case = 0; test_case < 10; test_case++) {
+        int current_size = array_sizes[test_case];
+        vector<int> sequence(current_size);
+        
+        for (int index = 0; index < current_size; index++) {
+            sequence[index] = index + 1;
+        }
+        
+        double total_execution_time = 0.0;
+        
+        for (int trial = 0; trial < 10; trial++) {
+            auto begin_time = chrono::high_resolution_clock::now();
+            int missing_num = searchMissingElement(sequence, current_size);
+            auto finish_time = chrono::high_resolution_clock::now();
+            
+            chrono::duration<double, micro> elapsed_time = finish_time - begin_time;
+            execution_times[test_case][trial] = elapsed_time.count();
+            total_execution_time += elapsed_time.count();
+        }
+        
+        double average_execution_time = total_execution_time / 10.0;
+        cout << "Array Size: " << current_size << " | Average Time: " << average_execution_time << " microseconds\n";
+    }
+    
+    return 0;
+}
