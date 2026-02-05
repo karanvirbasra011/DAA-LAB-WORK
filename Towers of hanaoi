@@ -1,0 +1,41 @@
+#include <iostream>
+#include <chrono>
+#include <vector>
+#include <iomanip>
+using namespace std;
+
+void solveHanoiPuzzle(int num_disks, char start_peg, char end_peg, char helper_peg) {
+    if (num_disks == 1) 
+        return;
+    
+    solveHanoiPuzzle(num_disks - 1, start_peg, helper_peg, end_peg);
+    solveHanoiPuzzle(num_disks - 1, helper_peg, end_peg, start_peg);
+}
+
+int main() {
+    vector<vector<double>> time_measurements(10, vector<double>(10));
+    vector<int> disk_counts = {5, 10, 15, 18, 19, 20, 21, 22, 23, 24};
+    
+    cout << "Tower of Hanoi Problem - Performance Analysis\n";
+    cout << "Student Roll: UEM243135\n\n";
+    
+    for (int test_case = 0; test_case < 10; test_case++) {
+        int current_disks = disk_counts[test_case];
+        double accumulated_time = 0.0;
+        
+        for (int run = 0; run < 10; run++) {
+            auto start_moment = chrono::high_resolution_clock::now();
+            solveHanoiPuzzle(current_disks, 'A', 'C', 'B');
+            auto end_moment = chrono::high_resolution_clock::now();
+            
+            chrono::duration<double, micro> time_taken = end_moment - start_moment;
+            time_measurements[test_case][run] = time_taken.count();
+            accumulated_time += time_taken.count();
+        }
+        
+        double mean_execution_time = accumulated_time / 10.0;
+        cout << "Number of Disks: " << current_disks << " | Average Time: " << mean_execution_time << " microseconds\n";
+    }
+    
+    return 0;
+}
