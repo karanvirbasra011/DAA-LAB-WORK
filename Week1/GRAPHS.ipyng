@@ -1,0 +1,10 @@
+import matplotlib.pyplot as plt
+degrees =  [100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000]
+times   =  [0.4258,2.0242,3.4086,7.807,11.4795,13.4017,18.3164,21.4432,23.4127,25.9286]  
+plt.plot(degrees, times, marker='o')
+plt.xlabel("Degree of Polynomial (n)")
+plt.ylabel("Average Time (microseconds)")
+plt.title("Horner's Rule - Time Complexity")
+plt.grid(True)
+plt.show()
+
