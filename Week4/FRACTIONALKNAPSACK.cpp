@@ -41,22 +41,32 @@ int sortByProfit(Item items[], int n, int M) {
     return totalProfit;
 }
 
-int sortByRatio(Item items[], int n, int M) {
+void sortByRatio(Item items[], int n) {
     for (int i = 0; i < n - 1; i++)
         for (int j = 0; j < n - i - 1; j++)
-            if ((double)items[j].profit / items[j].weight <   // ← this < was missing
+            if ((double)items[j].profit / items[j].weight 
                 (double)items[j+1].profit / items[j+1].weight)
                 swap(items[j], items[j+1]);
+}
 
-    int totalProfit = 0;
+double fractionalKnapsack(Item items[], int n, int M) {
+    sortByRatio(items, n);
+
+    double totalProfit = 0.0; 
+
     for (int i = 0; i < n; i++) {
         if (M >= items[i].weight) {
             totalProfit += items[i].profit;
             M -= items[i].weight;
+        } else {
+            double fraction = (double)M / items[i].weight;
+            totalProfit += fraction * items[i].profit;
+            break;  
         }
     }
     return totalProfit;
 }
+
 
 int main() {
     int sizes[10] = {100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000};
