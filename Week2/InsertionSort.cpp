@@ -1,68 +1,61 @@
 #include <iostream>
 #include <chrono>
-#include <iomanip>
 #include <cstdlib>
 #include <ctime>
 using namespace std;
 
-void insertionSort_UEM243135(int uem2_arr[], int uem4_size)
-{
-    for (int uem1_j = 1; uem1_j < uem4_size; uem1_j++)
-    {
-        int uem3_key = uem2_arr[uem1_j];
-        int uem1_i   = uem1_j - 1;
-
-        while (uem1_i >= 0 && uem2_arr[uem1_i] > uem3_key)
-        {
-            uem2_arr[uem1_i + 1] = uem2_arr[uem1_i];
-            uem1_i--;
+void insertionSort(int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
         }
-        uem2_arr[uem1_i + 1] = uem3_key;
+        arr[j + 1] = key;
     }
 }
 
-int main()
-{
-    cout << "Roll No: UEM243135" << endl;
-    cout << "Insertion Sort - Time Analysis\n\n";
+int main() {
+    int testValues[10] = {100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000};
+    int runs = 10;
 
-    int    uem2_testSizes[10] = {1000, 1500, 2500, 3500, 4500, 5500, 6500, 7500, 8500, 9500};
-    double uem4_timings[10][10];
+    srand(time(0));
+    cout << "UEM243135 Code for Insertion Sort Worst Case\n";
+    cout << "Array Size | Average Time (microseconds)\n";
+    cout << "------------------------------------------\n";
 
-    for (int uem1_i = 0; uem1_i < 10; uem1_i++)
-    {
-        int uem4_n = uem2_testSizes[uem1_i];
+    for (int i = 0; i < 10; i++) {
+        int n = testValues[i];
 
-        int *uem2_arr = new int[uem4_n];
-
-        srand(time(0) + uem1_i);
-        for (int uem1_k = 0; uem1_k < uem4_n; uem1_k++) {
-            uem2_arr[uem1_k] = rand() % 1000 + 1;
+        int* original = new int[n];
+        for (int k = 0; k < n; k++) {
+        original[k] = n - k;  
         }
 
-        double uem3_totalTime = 0;
+        double totalTime = 0.0;
 
-        for (int uem1_iter = 0; uem1_iter < 10; uem1_iter++)
-        {
-            auto uem1_startTime = chrono::high_resolution_clock::now();
+        for (int r = 0; r < runs; r++) {
 
-            insertionSort_UEM243135(uem2_arr, uem4_n);
+            int* temp = new int[n];
+            for (int k = 0; k < n; k++) {
+                temp[k] = original[k];
+            }
 
-            auto uem1_endTime = chrono::high_resolution_clock::now();
+            auto start = chrono::high_resolution_clock::now();
+            insertionSort(temp, n);
+            auto end = chrono::high_resolution_clock::now();
 
-            chrono::duration<double, micro> uem1_duration = uem1_endTime - uem1_startTime;
+            chrono::duration<double, micro> duration = end - start;
+            totalTime += duration.count();
 
-            uem4_timings[uem1_i][uem1_iter] = uem1_duration.count();
-            uem3_totalTime += uem1_duration.count();
+            delete[] temp;
         }
 
-        double uem3_avgTime = uem3_totalTime / 10.0;
+        double avgTime = totalTime / runs;
+        cout << n << "      | " << avgTime << " microseconds\n";
 
-        cout << fixed << setprecision(4);
-        cout << "Array Size: " << uem4_n
-             << " | Average Time: " << uem3_avgTime << " microseconds\n\n";
-
-        delete[] uem2_arr;
+        delete[] original;
     }
 
     return 0;
