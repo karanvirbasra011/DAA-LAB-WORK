@@ -1,70 +1,88 @@
 #include <iostream>
+#include <chrono>
+#include <cstdlib>
+#include <ctime>
+#include <climits>
 using namespace std;
 
-void merge(int array[], int leftIndex, int midIndex, int rightIndex) {
-    int leftSize = midIndex - leftIndex + 1;
-    int rightSize = rightIndex - midIndex;
+void merge(int A[], int p, int q, int r) {
+    int n1 = q - p + 1;
+    int n2 = r - q;
 
-    int leftSubArray[leftSize], rightSubArray[rightSize];
+    int* L = new int[n1 + 1];
+    int* R = new int[n2 + 1];
 
-    for (int i = 0; i < leftSize; i++)
-        leftSubArray[i] = array[leftIndex + i];
-    for (int j = 0; j < rightSize; j++)
-        rightSubArray[j] = array[midIndex + 1 + j];
+    for (int i = 0; i < n1; i++)
+        L[i] = A[p + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = A[q + 1 + j];
 
-    int leftPointer = 0, rightPointer = 0, mergedIndex = leftIndex;
+    L[n1] = INT_MAX;
+    R[n2] = INT_MAX;
 
-    while (leftPointer < leftSize && rightPointer < rightSize) {
-        if (leftSubArray[leftPointer] <= rightSubArray[rightPointer]) {
-            array[mergedIndex] = leftSubArray[leftPointer];
-            leftPointer++;
+    int i = 0, j = 0;
+
+    for (int k = p; k <= r; k++) {
+        if (L[i] <= R[j]) {
+            A[k] = L[i];
+            i++;
         } else {
-            array[mergedIndex] = rightSubArray[rightPointer];
-            rightPointer++;
+            A[k] = R[j];
+            j++;
         }
-        mergedIndex++;
     }
 
-    while (leftPointer < leftSize) {
-        array[mergedIndex] = leftSubArray[leftPointer];
-        leftPointer++;
-        mergedIndex++;
-    }
-
-    while (rightPointer < rightSize) {
-        array[mergedIndex] = rightSubArray[rightPointer];
-        rightPointer++;
-        mergedIndex++;
-    }
+    delete[] L;
+    delete[] R;
 }
 
-void mergeSort(int array[], int leftIndex, int rightIndex) {
-    if (leftIndex < rightIndex) {
-        int midIndex = leftIndex + (rightIndex - leftIndex) / 2;
-
-        mergeSort(array, leftIndex, midIndex);
-        mergeSort(array, midIndex + 1, rightIndex);
-        merge(array, leftIndex, midIndex, rightIndex);
+void mergeSort(int A[], int p, int r) {
+    if (p < r) {
+        int q = (p + r) / 2;
+        mergeSort(A, p, q);
+        mergeSort(A, q + 1, r);
+        merge(A, p, q, r);
     }
 }
 
 int main() {
-    int totalElements;
-    cout << "Enter the number of elements: ";
-    cin >> totalElements;
+    int sizes[10] = {1000, 5000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000};
+    int runs = 10;
 
-    int array[totalElements];
-    cout << "Enter " << totalElements << " elements: ";
-    for (int i = 0; i < totalElements; i++) {
-        cin >> array[i];
+    srand(time(0));
+    cout << "UEM24135 CODE FOR MERGE SORT\n;
+    cout << "Array Size | Average Time (microseconds)\n";
+    cout << "------------------------------------------\n";
+
+    for (int i = 0; i < 10; i++) {
+        int n = sizes[i];
+
+        int* orig = new int[n];
+        for (int k = 0; k < n; k++)
+            orig[k] = rand() % 1000 + 1;
+
+        double total = 0.0;
+
+        for (int r = 0; r < runs; r++) {
+            int* temp = new int[n];
+            for (int k = 0; k < n; k++)
+                temp[k] = orig[k];
+
+            auto start = chrono::high_resolution_clock::now();
+            mergeSort(temp, 0, n - 1);
+            auto end = chrono::high_resolution_clock::now();
+
+            chrono::duration<double, micro> dur = end - start;
+            total += dur.count();
+
+            delete[] temp;
+        }
+
+        double avg = total / runs;
+        cout << n << "      | " << avg << " microseconds\n";
+
+        delete[] orig;
     }
-
-    mergeSort(array, 0, totalElements - 1);
-
-    cout << "Sorted array: ";
-    for (int i = 0; i < totalElements; i++)
-        cout << array[i] << " ";
-    cout << endl;
 
     return 0;
 }
