@@ -27,7 +27,7 @@ int main() {
 
         int* arr = new int[n];
         for (int k = 0; k < n; k++) {
-            arr[k] = k + 1;  // sorted array 1,2,3...n
+            arr[k] = k + 1;  
         }
         
         int target = -1;
