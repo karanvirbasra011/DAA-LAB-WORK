@@ -1,4 +1,4 @@
-DSA Practical - Week 2
+ADA Practical - Week 2
 
 1. Binary Search
 
