@@ -1,0 +1,91 @@
+#include<iostream>
+using namespace std;
+
+int dist[100], parent[100];
+int adj[100][100];
+int n, m;
+
+void forwardPropagation(){
+    for(int i=0; i<n; i++){
+        dist[i] = 99999;
+        parent[i] = -1;
+    }
+    dist[0] = 0;
+
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            if(adj[i][j] != 0){
+                if(dist[i] != 99999 && dist[i] + adj[i][j] < dist[j]){
+                    dist[j] = dist[i] + adj[i][j];
+                    parent[j] = i;
+                }
+            }
+        }
+    }
+
+    cout<<"Forward Distance: "<<dist[n-1]<<endl;
+
+    int path[100], len=0;
+    int curr = n-1;
+    while(curr != -1){
+        path[len++] = curr;
+        curr = parent[curr];
+    }
+    cout<<"Forward Path: ";
+    for(int i=len-1; i>=0; i--)
+        cout<<path[i]<<" ";
+    cout<<endl;
+}
+
+void backwardPropagation(){
+    for(int i=0; i<n; i++){
+        dist[i] = 99999;
+        parent[i] = -1;
+    }
+    dist[n-1] = 0;
+
+    for(int i=n-1; i>=0; i--){
+        for(int j=0; j<n; j++){
+            if(adj[i][j] != 0){
+                if(dist[j] != 99999 && dist[j] + adj[i][j] < dist[i]){
+                    dist[i] = dist[j] + adj[i][j];
+                    parent[i] = j;
+                }
+            }
+        }
+    }
+
+    cout<<"Backward Distance: "<<dist[0]<<endl;
+
+    int path[100], len=0;
+    int curr = 0;
+    while(curr != -1){
+        path[len++] = curr;
+        curr = parent[curr];
+    }
+    cout<<"Backward Path: ";
+    for(int i=len-1; i>=0; i--)
+        cout<<path[i]<<" ";
+    cout<<endl;
+}
+
+int main(){
+    cout<<"Enter vertices and edges: ";
+    cin>>n>>m;
+
+    for(int i=0; i<n; i++)
+        for(int j=0; j<n; j++)
+            adj[i][j] = 0;
+
+    cout<<"Enter edges (u v w):\n";
+    for(int i=0; i<m; i++){
+        int u, v, w;
+        cin>>u>>v>>w;
+        adj[u][v] = w;
+    }
+
+    forwardPropagation();
+    backwardPropagation();
+
+    return 0;
+}
