@@ -1,0 +1,91 @@
+#include <iostream>
+using namespace std;
+
+const int INF = 99999;
+const int MAX = 10;
+
+int n;                      
+int dist[MAX][MAX];        
+int g[MAX][1 << MAX];       // g[i][S] = min cost from city i visiting all in S and back to 0
+int path[MAX][1 << MAX];    
+
+int tsp(int city, int visited)
+{
+    // BASE CASE: all cities visited, return to city 0
+    if (visited == (1 << n) - 1)
+        return dist[city][0];
+
+    // already computed
+    if (g[city][visited] != -1)
+        return g[city][visited];
+
+    int best = INF;
+
+    // try every city that is NOT yet visited
+    for (int next = 0; next < n; next++)
+    {
+        // skip if already visited or no road
+        if (visited & (1 << next)) continue;
+        if (dist[city][next] == INF)  continue;
+
+        // cost = go to next + solve rest from next
+        int cost = dist[city][next] + tsp(next, visited | (1 << next));
+
+        if (cost < best)
+        {
+            best = cost;
+            path[city][visited] = next;   // remember best next city
+        }
+    }
+
+    return g[city][visited] = best;
+}
+
+// ── STEP 2: Print the optimal tour ────────────────────
+void printTour()
+{
+    cout << "\nOptimal Tour: 0";
+
+    int visited = 1;   // city 0 already visited (bit 0 = 1)
+    int curr    = 0;
+
+    while (visited != (1 << n) - 1)
+    {
+        int next = path[curr][visited];
+        cout << " -> " << next;
+        visited = visited | (1 << next);
+        curr = next;
+    }
+
+    cout << " -> 0" << endl;   // return home
+}
+
+// ── MAIN ──────────────────────────────────────────────
+int main()
+{
+    cout << "Enter number of cities: ";
+    cin >> n;
+
+    cout << "Enter distance matrix (" << n << "x" << n << "):\n";
+    cout << "(Enter 99999 if no direct road between two cities)\n\n";
+
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> dist[i][j];
+
+    // initialize g and path tables with -1
+    for (int i = 0; i < n; i++)
+        for (int s = 0; s < (1 << n); s++)
+        {
+            g[i][s]    = -1;
+            path[i][s] = -1;
+        }
+
+    // start from city 0, city 0 already visited so mask = 0001 = 1
+    int answer = tsp(0, 1);
+
+    cout << "\nMinimum Tour Cost = " << answer;
+    printTour();
+
+    return 0;
+}
