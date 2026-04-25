@@ -53,10 +53,76 @@ Input:
   n = 6
   p = {300, 355, 155, 555, 100, 200, 250}
 
-  Problem-2
-
-  
-
 Output:
   Minimum Cost = 37255000
-  Optimal Parenthesization = ((M1(M2(M3M4)))(M5M6))
+Optimal Parenthesization = ((M1(M2(M3M4)))(M5M6))
+
+Problem-2
+# Multistage Graph - Forward and Backward Propagation
+
+## Problem Statement
+Given a directed weighted multistage graph with n vertices and m edges,
+find the minimum cost path from source (vertex 0) to destination (vertex n-1)
+using two approaches:
+
+1. Forward Propagation  - starts from source (vertex 0) and moves forward
+                          to find shortest path to destination (vertex n-1)
+
+2. Backward Propagation - starts from destination (vertex n-1) and moves
+                          backward to find shortest path to source (vertex 0)
+
+Both approaches must give the same minimum cost and same optimal path.
+The graph is represented as an adjacency matrix where adj[i][j] = weight
+of directed edge from i to j, and 0 means no edge.
+
+## Algorithm Used
+Dynamic Programming with relaxation (similar to Bellman-Ford one pass)
+
+  Forward:
+    dist[0] = 0, all others = INF
+    For each vertex i, relax all outgoing edges i -> j:
+      if dist[i] + adj[i][j] < dist[j] then update dist[j]
+
+  Backward:
+    dist[n-1] = 0, all others = INF
+    For each vertex i (reverse order), relax all edges i -> j:
+      if dist[j] + adj[i][j] < dist[i] then update dist[i]
+
+  Path is traced back using parent[] array.
+
+## Time and Space Complexity
+
+| Complexity | Value  | Reason                                          |
+|------------|--------|-------------------------------------------------|
+| Time       | O(V²)  | Two nested loops over all vertices (V x V)      |
+| Space      | O(V²)  | Adjacency matrix stored as V x V array          |
+| Extra      | O(V)   | dist[], parent[], path[] arrays of size V       |
+
+## Input
+- n = number of vertices (0 to n-1)
+- m = number of edges
+- Each edge: u v w  (directed edge from u to v with weight w)
+
+## Output
+- Forward Distance  : minimum cost from vertex 0 to vertex n-1
+- Forward Path      : actual path taken (source to destination)
+- Backward Distance : minimum cost from vertex n-1 to vertex 0
+- Backward Path     : actual path taken (destination to source)
+
+## Example
+Input:
+  n = 5, m = 7
+  Edges:
+    0 1 2
+    0 2 4
+    1 3 3
+    2 3 1
+    1 4 6
+    3 4 2
+    2 4 5
+
+Output:
+  Forward Distance : 8
+  Forward Path     : 0 2 3 4
+  Backward Distance: 8
+  Backward Path    : 0 2 3 4
